@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/07/15 21:24:28 by superuser         #+#    #+#             */
-/*   Updated: 2020/08/06 14:39:30 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/06 15:01:12 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/select.h>
+#include <fcntl.h>
 
 #define PORT 8081
 # define SADRR struct sockaddr *
 
-int ft_creat_server(struct sockaddr_in *ad){
+int ft_creat_server(struct sockaddr_in *ad)
+{
     int fd;
     int opt;
 
@@ -43,10 +45,9 @@ int ft_creat_server(struct sockaddr_in *ad){
         perror("bind ");
         exit(1);
     }
-    perror("check");
     return (fd);
 }
-#include <fcntl.h>
+
 
 char *ft_get(char *file)
 {
@@ -58,8 +59,6 @@ char *ft_get(char *file)
 
     while (get_next_line(fd, '\n', &line) > 0)
     {
-        ft_printf("ok\n");
-        ft_printf("line = %s\n", line);
         if (!str)
             str = ft_strdup(line);
         else
@@ -85,13 +84,11 @@ char    *ft_read(int fd, int t){
            FD_ZERO(&rfds);
             FD_SET(fd, &rfds);
         retval = select(fd + 1, &rfds, NULL, NULL, &tv);
-        ft_printf("sl = %d\n", retval);
         if (retval == -1){
             perror("select()");
             exit(EXIT_FAILURE);
         } else if (retval) {
             read(fd, &c, 1);
-            ft_printf("|c = %c|\n", c);
             str = ft_join("%f%c", str, c);
             continue;
         }
