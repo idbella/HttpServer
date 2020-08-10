@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/07 19:30:15 by sid-bell          #+#    #+#             */
-/*   Updated: 2020/08/07 20:20:34 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/08 22:09:03 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,9 +22,27 @@
 # include <stdlib.h>
 # include <sys/select.h>
 # include <fcntl.h>
+# include <sys/stat.h>
+# include <sys/mman.h>
 
 # define PORT 8081
 # define SADRR struct sockaddr *
+
+enum e_method
+{
+	GET,
+	POST,
+	DELETE,
+	PUT
+};
+
+typedef struct	s_httprequest
+{
+	char			*http_version;
+	char			*route;
+	enum e_method	method;
+	char			*body;
+}				t_httprequest;
 
 int		ft_tcpsocket(unsigned short port);
 char    *ft_readsocket(int fd);

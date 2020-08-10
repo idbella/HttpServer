@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/07 20:16:24 by sid-bell          #+#    #+#             */
-/*   Updated: 2020/08/07 20:16:40 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/08 02:28:27 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,16 @@
 
 char *ft_loadstatic(char *file)
 {
-    int fd = open(file, O_RDONLY);
+    int         fd;
+    struct stat st;
+    char        *content;
+
+    fd = open(file, O_RDONLY);
     if (fd < 0)
         return ft_strdup("404 not found");
-    char *line;
-    char *str = NULL;
-
-    while (get_next_line(fd, '\n', &line) > 0)
-    {
-        if (!str)
-            str = ft_strdup(line);
-        else
-            str = ft_join("%s\n%s", str, line);
-        ft_strdel(&line);
-    }
-    return str;
+    fstat(fd, &st);
+    content = mmap(NULL, st.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    if (connect == MAP_FAILED)
+        return (NULL);
+    return connect;
 }
