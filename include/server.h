@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/07 19:30:15 by sid-bell          #+#    #+#             */
-/*   Updated: 2020/08/08 22:09:03 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/11 00:17:39 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@
 
 enum e_method
 {
+	NONE = -1,
 	GET,
 	POST,
 	DELETE,
@@ -43,6 +44,12 @@ typedef struct	s_httprequest
 	enum e_method	method;
 	char			*body;
 }				t_httprequest;
+
+typedef struct	s_client
+{
+	t_httprequest	request;
+	int				headers_sent;
+}				t_client;
 
 int		ft_tcpsocket(unsigned short port);
 char    *ft_readsocket(int fd);

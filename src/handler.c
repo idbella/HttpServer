@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/07 20:09:05 by sid-bell          #+#    #+#             */
-/*   Updated: 2020/08/10 23:52:49 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/11 00:30:08 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,20 +22,23 @@ enum e_method get_request_method(char *str)
 		return (DELETE);
 	if (ft_strequ(str, "PUT"))
 		return (PUT);
-	return (-1);
+	return (NONE);
 }
 
-char validate_http(char **parts)
+enum e_method validate_http(char **parts)
 {
+	enum e_method method;
+
+	method = NONE;
 	if (parts && parts[0] && parts[1] && parts[2])
 	{
-		if (get_request_method(parts[0]) < 0)
+		if ((method = get_request_method(parts[0])) == NONE)
 		{
 			printf("%s: unsupported method\n", parts[0]);
-			return (0);
+			return (method);
 		}
 	}
-	return (0);
+	return (method);
 }
 
 char getroute(char **parts)
@@ -49,48 +52,50 @@ t_httprequest *parser(char *request_text)
 	int				index;
 	char			**parts;
 	t_httprequest	*request;
-	int				status;
 
 	if (!(lines = ft_strsplit(request_text, '\n')))
 		return (NULL);
 	index = 1;
 	parts = ft_strsplit(lines[0], ' ');
-
-	if (validate_http(parts))
+	request = NULL;
+	if (validate_http(parts) != NONE)
 	{
-		status = 0;
-		while (lines && lines[index])
-		{
-			if (ft_strequ(lines[index], ""))
-			{
-				status = 1;
-				break ;
-			}
-			printf("headers = %s\n", lines[index]);
-			index++;
-		}
-		if (status)
-		{
-			request = ft_memalloc(sizeof(t_httprequest));
-		}
+		request = ft_memalloc(sizeof(t_httprequest));
+		request->http_version = parts[2];
+		request->method = get_request_method(parts[0]);
+		request->route = parts[1];
 	}
 	return (request);
 }
 
-void    handler(int client)
+void    handler(int client_fd)
 {
-	char	*response;
-	char	*plain_text_request;
+	char		*response;
+	char		*plain_text_request;
+	t_client	client;
 
-	if ((plain_text_request = ft_readsocket(client)))
+	client.headers_sent = 2;
+	if ((plain_text_request = ft_readsocket(client_fd)))
 	{
-		response = "it's working";
-		parser(plain_text_request);
-		ft_printf_fd(
-			client,
-			"HTTP/1.1 200\nContent-Length: %d\nContent-Type: text/html\n\n%s",
-			strlen(response),
-			response
-		);
+		if (parser(plain_text_request))
+		{
+			response = "it's working";
+			ft_printf_fd(
+				client_fd,
+				"HTTP/1.1 200\nContent-Length: %d\nContent-Type: text/html\n\n%s",
+				strlen(response),
+				response
+			);
+		}
+		else
+		{
+			response = "bad request";
+			ft_printf_fd(
+				client_fd,
+				"HTTP/1.1 400\nContent-Length: %d\nContent-Type: text/html\n\n%s",
+				strlen(response),
+				response
+			);
+		}
 	}
 }
