@@ -6,20 +6,21 @@
 #    By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/01 06:02:07 by sid-bell          #+#    #+#              #
-#    Updated: 2020/08/08 22:05:20 by sid-bell         ###   ########.fr        #
+#    Updated: 2020/08/16 17:12:38 by sid-bell         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME=server
 
-FLAGS= #-Wall -Wextra -Werror -g
+FLAGS= -Wall -Wextra -Werror -g
 
 LIBFT= src/libft/libft.a
 
 INC= -Iinclude
 
 OBJ=src/main.o		src/handler.o\
-	src/tcpsocket.o	src/readsocket.o
+	src/tcpsocket.o	src/readsocket.o\
+	src/loadstatic.o
 
 CFLAGS = $(INC) $(FLAGS)
 

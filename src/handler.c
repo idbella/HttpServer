@@ -6,7 +6,7 @@
 /*   By: sid-bell <sid-bell@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/08/07 20:09:05 by sid-bell          #+#    #+#             */
-/*   Updated: 2020/08/11 00:30:08 by sid-bell         ###   ########.fr       */
+/*   Updated: 2020/08/16 17:30:41 by sid-bell         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,21 +41,14 @@ enum e_method validate_http(char **parts)
 	return (method);
 }
 
-char getroute(char **parts)
-{
-	return 1;
-}
-
 t_httprequest *parser(char *request_text)
 {
 	char			**lines;
-	int				index;
 	char			**parts;
 	t_httprequest	*request;
 
 	if (!(lines = ft_strsplit(request_text, '\n')))
 		return (NULL);
-	index = 1;
 	parts = ft_strsplit(lines[0], ' ');
 	request = NULL;
 	if (validate_http(parts) != NONE)
@@ -70,16 +63,15 @@ t_httprequest *parser(char *request_text)
 
 void    handler(int client_fd)
 {
-	char		*response;
-	char		*plain_text_request;
-	t_client	client;
+	char			*response;
+	char			*plain_text_request;
+	t_httprequest	*request;
 
-	client.headers_sent = 2;
 	if ((plain_text_request = ft_readsocket(client_fd)))
 	{
-		if (parser(plain_text_request))
+		if ((request = parser(plain_text_request)))
 		{
-			response = "it's working";
+			response = ft_loadstatic(request->route);
 			ft_printf_fd(
 				client_fd,
 				"HTTP/1.1 200\nContent-Length: %d\nContent-Type: text/html\n\n%s",
